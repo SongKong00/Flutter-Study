@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:sprintf/sprintf.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sprintf/sprintf.dart';        //문자열 포맷팅 패키지
+import 'package:fluttertoast/fluttertoast.dart';    //toast 메세지 패키지
 
-enum TimerStatus { running, paused, stopped, resting }
+enum TimerStatus { running, paused, stopped, resting }    //TimeStatus 자료형 설정
 
 class TimerScreen extends StatefulWidget{
   const TimerScreen({super.key});
@@ -29,7 +29,7 @@ class _TimerScreenState extends State<TimerScreen>{
   }
 
   String secondsToString(int seconds){
-    return sprintf("%02d:%02d", [seconds ~/60, seconds % 60]);
+    return sprintf("%02d:%02d", [seconds ~/60, seconds % 60]);    //%02d : 정수 2자리 출력하는데 2자리보다 작으면 0으로 채우도록 함
   }
 
   void run(){
@@ -80,7 +80,7 @@ class _TimerScreenState extends State<TimerScreen>{
   }
 
   void runTimer() async {
-    Timer.periodic(Duration(seconds: 1), (Timer t) {
+    Timer.periodic(Duration(seconds: 1), (Timer t) {      //1초마다 불러오는 함수
       switch (_timerStatus) {
         case TimerStatus.paused:
           t.cancel();
@@ -89,13 +89,13 @@ class _TimerScreenState extends State<TimerScreen>{
           t.cancel();
           break;
         case TimerStatus.running:
-          if (_timer <= 0){
+          if (_timer <= 0){         //시간 0초 되면 불러오는 경우
             showToast("작업 완료!");
             rest();
           }
           else {
             setState(() {
-              _timer -= 1;
+              _timer -= 1;          //시간 1초씩 줄어듬
             });
           }
           break;
@@ -124,7 +124,7 @@ class _TimerScreenState extends State<TimerScreen>{
   Widget build(BuildContext context){
     final List<Widget> _runningButtons = [
       ElevatedButton(
-          onPressed: _timerStatus == TimerStatus.paused ? resume : pause,
+          onPressed: _timerStatus == TimerStatus.paused ? resume : pause,           //일시 정지 중? 버튼 '계속하기', 안멈추면 버튼 '일시정지'로 뜨도록
           style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
           child: Text(
             _timerStatus == TimerStatus.paused ? '계속하기' : '일시정지',
@@ -158,7 +158,7 @@ class _TimerScreenState extends State<TimerScreen>{
     return Scaffold(
       appBar: AppBar(
         title: const Text('뽀모도로 타이머'),
-        backgroundColor: _timerStatus == TimerStatus.resting ? Colors.green : Colors.blue,
+        backgroundColor: _timerStatus == TimerStatus.resting ? Colors.green : Colors.blue,      //휴식시간에는 초록색 배경, 아니면 파란색 배경
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -168,7 +168,7 @@ class _TimerScreenState extends State<TimerScreen>{
             width: MediaQuery.of(context).size.width * 0.6,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _timerStatus == TimerStatus.resting ? Colors.green : Colors.blue,
+              color: _timerStatus == TimerStatus.resting ? Colors.green : Colors.blue,          //휴식시간에는 초록색 배경, 작업 중에는 파란색 배경
             ),
             child: Center(
               child: Text(
@@ -183,9 +183,9 @@ class _TimerScreenState extends State<TimerScreen>{
           ),
           Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: _timerStatus == TimerStatus.resting
+          children: _timerStatus == TimerStatus.resting          //휴식중? 버튼 있음 : 없음
           ? const []
-              : _timerStatus == TimerStatus.stopped
+              : _timerStatus == TimerStatus.stopped              //정지? 정지 중 버튼 : 작업 중 버튼
               ? _stoppedButtons
               : _runningButtons,
           )
